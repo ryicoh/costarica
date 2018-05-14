@@ -66,15 +66,15 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
+    nonlocal display_name
+
     text = event.message.text
     if isinstance(event.source, SourceUser):
-        profile = line_bot_api.get_profile(event.source.user_id)
+        print(f"ユーザーIDは{event.source.user_id}です")
+        display_name = line_bot_api.get_profile(event.source.user_id).display_name
     else:
-        print('display_name_error')
-
-    display_name = profile.display_name
-
-    print(f"{display_name}からメッセージが送信された")
+        reply_message(event, 'User IDを設定してね')
+        return
 
     if text == 'ヘルプ':
         reply_message(event,
@@ -89,7 +89,6 @@ def message_text(event):
             counter_str = ''
             for chef, count in chefs_counter.items():
                 counter_str += f"{chef}: {count}\n"
-
             reply_message(event, counter_str)
 
         else:
