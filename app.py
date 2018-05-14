@@ -68,7 +68,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     global chefs_counter
-    
+
     text = event.message.text
     print(event.source.type)
 
@@ -100,7 +100,7 @@ def message_text(event):
         reply_message(event, f"今日のシェフは{display_name}だ")
 
         if randint(0, 10) == 0:
-            reply_message(event, '今日のご飯は上手くなるぞ！'')
+            reply_message(event, '今日のご飯は上手くなるぞ！')
 
         print("実行前: ", end='')
         print(chefs_counter[display_name])
