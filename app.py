@@ -75,11 +75,7 @@ def message_text(event):
 'シェフ': 今日の当番は任せたぜ！
 'bye'  : グループから去ります。
 """)
-<<<<<<< HEAD
 
-=======
-
->>>>>>> 79c520f81e6077c7be4b78ea5d7eabfb5b43338e
 
     if text == '回数':
         message = ''
