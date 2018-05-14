@@ -67,11 +67,14 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     text = event.message.text
-    display_name = "Unnamed"
     if isinstance(event.source, SourceUser):
-        display_name = line_bot_api.get_profile(event.source.user_id).display_name
+        profile = line_bot_api.get_profile(event.source.user_id)
     else:
         print('display_name_error')
+
+    display_name = profile.display_name
+
+    print(f"{display_name}からメッセージが送信された")
 
     if text == 'ヘルプ':
         reply_message(event,
@@ -94,8 +97,11 @@ def message_text(event):
         if randint(0, 10) == 0:
             reply_message(event, f"今日のご飯は上手くなるぞ！")
 
+        print("実行前: ", end='')
+        print(chefs_counter[display_name])
         chefs_counter[display_name] += 1
-        print(f"{display_name}に1つ追加された")
+        print("実行後: ", end='')
+        print(chefs_counter[display_name])
 
     elif text == 'シェフ':
         reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
