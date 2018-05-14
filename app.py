@@ -44,6 +44,8 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+chefs_counter = defaultdict(int)
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -65,6 +67,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
+    global chefs_counter
+    
     text = event.message.text
     print(event.source.type)
 
@@ -145,5 +149,4 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    chefs_counter = defaultdict(int)
     app.run(debug=options.debug, port=options.port)
