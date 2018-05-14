@@ -76,7 +76,7 @@ def message_text(event):
 'セット [数字]': 回数を設定
 'bye'  : グループから去ります。""")
 
-elif text == '回数' and chefs_counter:
+    elif text == '回数' and chefs_counter:
         counter_str = ''
         for chef, count in chefs_counter.items():
             counter_str += f"{chef}: {count}\n"
