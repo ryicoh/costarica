@@ -84,12 +84,17 @@ def message_text(event):
 'セット [数字]': 回数を設定
 'bye'  : グループから去ります。""")
 
-    elif text == '回数' and chefs_counter:
-        counter_str = ''
-        for chef, count in chefs_counter.items():
-            counter_str += f"{chef}: {count}\n"
+    elif text == '回数':
+        if chefs_counter:
+            counter_str = ''
+            for chef, count in chefs_counter.items():
+                counter_str += f"{chef}: {count}\n"
 
-        reply_message(event, counter_str)
+            reply_message(event, counter_str)
+
+        else:
+            reply_message(event, 'シェフがいないようだ')
+
 
     elif text == '任せろ':
         reply_message(event, f"今日のシェフは{display_name}だ")
@@ -104,7 +109,10 @@ def message_text(event):
         print(chefs_counter[display_name])
 
     elif text == 'シェフ':
-        reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
+        if chefs_counter:
+            reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
+        else:
+            reply_message(event, 'シェフがいないようだ')
 
     elif text.split(' ')[0] == 'セット':
         try:
