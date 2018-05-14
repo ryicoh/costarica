@@ -70,20 +70,18 @@ def message_text(event):
 
     if text == 'ヘルプ':
         reply_message(event,
-"""
-'回数'　: みんなの担当回数が見れるよ。
-'シェフ': 今日の当番は任せたぜ！
-'bye'  : グループから去ります。
-""")
-
+            """'回数'　: みんなの担当回数が見れるよ。
+            '任せろ': 今日の当番は任せたぜ！
+            'シェフ': 今日のシェフを決めるよ。
+            'bye'  : グループから去ります。""")
 
     if text == '回数':
-        message = ''
+        counter_str = ''
         for chef, count in chefs_counter:
-            message += f"{chef}: {count}¥n"
-        reply_message(event, message)
+            counter_str += f"{chef}: {count}¥n"
+        reply_message(event, counter_str)
 
-    elif text == 'シェフ':
+    elif text == '任せろ':
         if isinstance(event.source, SourceUser):
             display_name = line_bot_api.get_profile(event.source.user_id).display_name
             reply_message(event, f"今日のシェフは{display_name}だ。")
@@ -103,6 +101,9 @@ def message_text(event):
 
         else:
             reply_message(event, "個人チャットでは退出できなのだ")
+
+    elif text == 'シェフ':
+        reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
 
 
 def reply_message(event, message):
