@@ -5,6 +5,8 @@ import os
 import sys
 import tempfile
 from argparse import ArgumentParser
+from collections import defaultdict
+from random import randint
 
 from flask import Flask, request, abort
 
@@ -42,6 +44,8 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+chefs_counter = defaultdict(int)
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -65,97 +69,47 @@ def callback():
 def message_text(event):
     text = event.message.text
 
-    print(dir(event))
-    print(dir(event.message))
+    if text == 'ヘルプ':
+        reply_message(
+"""
+'回数'　: みんなの担当回数が見れるよ。
+'シェフ': 今日の当番は任せたぜ！
+'bye'  : グループから去ります。
+""")
 
-    if text == 'profile':
+
+    if text == '回数':
+        message = ''
+        for chef, count in chefs_counter:
+            message += f"{chef}: {count}¥n"
+        reply_message("message")
+
+    elif text == 'シェフ':
         if isinstance(event.source, SourceUser):
-            profile = line_bot_api.get_profile(event.source.user_id)
-            line_bot_api.reply_message(
-                event.reply_token, [
-                    TextSendMessage(
-                        text='Display name: ' + profile.display_name
-                    ),
-                    TextSendMessage(
-                        text='Status message: ' + profile.status_message
-                    )
-                ]
-            )
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextMessage(text="Bot can't use profile API without user ID"))
+            display_name = line_bot_api.get_profile(event.source.user_id).display_name
+            reply_message(f"今日のシェフは{display_name}だ。")
+
+            if randint(0, 10) == 0:
+                reply_message(f"今日のご飯は上手くなるぞ！")
+
+            chefs_counter[display_name] += 1
+
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
-            line_bot_api.reply_message(
-                event.reply_token, TextMessage(text='Leaving group'))
+            reply_message('さらば')
             line_bot_api.leave_group(event.source.group_id)
+
         elif isinstance(event.source, SourceRoom):
-            line_bot_api.reply_message(
-                event.reply_token, TextMessage(text='Leaving group'))
-            line_bot_api.leave_room(event.source.room_id)
+            reply_message('さらば')
+
         else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextMessage(text="Bot can't leave from 1:1 chat"))
-    elif text == 'confirm':
-        confirm_template = ConfirmTemplate(text='Do it?', actions=[
-            MessageTemplateAction(label='Yes', text='Yes!'),
-            MessageTemplateAction(label='No', text='No!'),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Confirm alt text', template=confirm_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'buttons':
-        buttons_template = ButtonsTemplate(
-            title='My buttons sample', text='Hello, my buttons', actions=[
-                URITemplateAction(
-                    label='Go to line.me', uri='https://line.me'),
-                PostbackTemplateAction(label='ping', data='ping'),
-                PostbackTemplateAction(
-                    label='ping with text', data='ping',
-                    text='ping'),
-                MessageTemplateAction(label='Translate Rice', text='米')
-            ])
-        template_message = TemplateSendMessage(
-            alt_text='Buttons alt text', template=buttons_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'carousel':
-        carousel_template = CarouselTemplate(columns=[
-            CarouselColumn(text='hoge1', title='fuga1', actions=[
-                URITemplateAction(
-                    label='Go to line.me', uri='https://line.me'),
-                PostbackTemplateAction(label='ping', data='ping')
-            ]),
-            CarouselColumn(text='hoge2', title='fuga2', actions=[
-                PostbackTemplateAction(
-                    label='ping with text', data='ping',
-                    text='ping'),
-                MessageTemplateAction(label='Translate Rice', text='米')
-            ]),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Carousel alt text', template=carousel_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'image_carousel':
-        image_carousel_template = ImageCarouselTemplate(columns=[
-            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
-                                action=DatetimePickerTemplateAction(label='datetime',
-                                                                    data='datetime_postback',
-                                                                    mode='datetime')),
-            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
-                                action=DatetimePickerTemplateAction(label='date',
-                                                                    data='date_postback',
-                                                                    mode='date'))
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='ImageCarousel alt text', template=image_carousel_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'imagemap':
-        pass
-    else:
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text=event.message.text))
+            reply_message("個人チャットでは退出できなのだ")
+
+
+def reply_message(message):
+    line_bot_api.reply_message(
+        event.reply_token, [TextSendMessage(text=message)]
+    )
 
 
 if __name__ == "__main__":
