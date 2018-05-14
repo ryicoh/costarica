@@ -1,8 +1,13 @@
+from __future__ import unicode_literals
+
+import errno
 import os
 import sys
+import tempfile
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
+
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -11,29 +16,31 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
+    SourceUser, SourceGroup, SourceRoom,
+    TemplateSendMessage, ConfirmTemplate, MessageTemplateAction,
+    ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URITemplateAction,
+    PostbackTemplateAction, DatetimePickerTemplateAction,
+    CarouselTemplate, CarouselColumn, PostbackEvent,
+    StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
+    ImageMessage, VideoMessage, AudioMessage, FileMessage,
+    UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
 
 
+app = Flask(__name__)
 
+# get channel_secret and channel_access_token from your environment variable
+channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
+channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
+if channel_secret is None:
+    print('Specify LINE_CHANNEL_SECRET as environment variable.')
+    sys.exit(1)
+if channel_access_token is None:
+    print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
+    sys.exit(1)
 
-def main(options):
-    global __name__
-    app = Flask(__name__)
-
-    # get channel_secret and channel_access_token from your environment variable
-    channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
-    channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
-    if channel_secret is None:
-        print('Specify LINE_CHANNEL_SECRET as environment variable.')
-        sys.exit(1)
-    if channel_access_token is None:
-        print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
-        sys.exit(1)
-
-    line_bot_api = LineBotApi(channel_access_token)
-    handler = WebhookHandler(channel_secret)
-
-    app.run(debug=options.debug, port=options.port)
+line_bot_api = LineBotApi(channel_access_token)
+handler = WebhookHandler(channel_secret)
 
 
 @app.route("/callback", methods=['POST'])
@@ -151,7 +158,6 @@ def message_text(event):
             event.reply_token, TextSendMessage(text=event.message.text))
 
 
-
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
@@ -159,4 +165,5 @@ if __name__ == "__main__":
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
-    main(options)
+
+    app.run(debug=options.debug, port=options.port)
