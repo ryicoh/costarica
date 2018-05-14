@@ -76,7 +76,7 @@ def message_text(event):
 'セット [数字]': 回数を設定
 'bye'  : グループから去ります。""")
 
-    elif text == '回数':
+elif text == '回数' and chefs_counter:
         counter_str = ''
         for chef, count in chefs_counter.items():
             counter_str += f"{chef}: {count}\n"
@@ -84,14 +84,14 @@ def message_text(event):
         reply_message(event, counter_str)
 
     elif text == '任せろ':
-        if isinstance(event.source, SourceUser):
-            display_name = line_bot_api.get_profile(event.source.user_id).display_name
-            reply_message(event, f"今日のシェフは{display_name}だ。")
+        # if isinstance(event.source, SourceUser):
+        display_name = line_bot_api.get_profile(event.source.user_id).display_name
+        reply_message(event, f"今日のシェフは{display_name}だ。")
 
-            if randint(0, 10) == 0:
-                reply_message(event, f"今日のご飯は上手くなるぞ！")
+        if randint(0, 10) == 0:
+            reply_message(event, f"今日のご飯は上手くなるぞ！")
 
-            chefs_counter[display_name] += 1
+        chefs_counter[display_name] += 1
 
     elif text == 'シェフ':
         reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
