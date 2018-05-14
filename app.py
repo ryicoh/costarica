@@ -82,6 +82,7 @@ def message_text(event):
 'bye'  : グループから去ります。""")
 
     elif text == '回数':
+        print(chefs_counter)
         if any(chefs_counter):
             counter_str = ''
             for chef, count in chefs_counter.items():
@@ -105,6 +106,7 @@ def message_text(event):
         print(chefs_counter[display_name])
 
     elif text == 'シェフ':
+        print(chefs_counter)
         if any(chefs_counter):
             reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
         else:
