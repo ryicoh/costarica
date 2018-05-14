@@ -79,7 +79,7 @@ def message_text(event):
     elif text == '回数':
         counter_str = ''
         for chef, count in chefs_counter.items():
-            counter_str += f"{chef}: {count}¥n"
+            counter_str += f"{chef}: {count}\n"
 
         reply_message(event, counter_str)
 
@@ -103,7 +103,7 @@ def message_text(event):
             chefs_counter[display_name] = int(text.split(' ')[1])
             reply_message(event, "セットされたよ")
         except Error:
-            reply_message(event, "ミス¥nセット　[数字]¥nと入力してね")
+            reply_message(event, "ミス\nセット　[数字]\nと入力してね")
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
