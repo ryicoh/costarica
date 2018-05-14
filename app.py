@@ -44,7 +44,6 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
-chefs_counter = defaultdict(int)
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -97,7 +96,7 @@ def message_text(event):
         reply_message(event, f"今日のシェフは{display_name}だ")
 
         if randint(0, 10) == 0:
-            reply_message(event, f"今日のご飯は上手くなるぞ！")
+            reply_message(event, '今日のご飯は上手くなるぞ！'')
 
         print("実行前: ", end='')
         print(chefs_counter[display_name])
@@ -117,7 +116,7 @@ def message_text(event):
             chefs_counter[display_name] = int(text.split(' ')[1])
             reply_message(event, "セットされたよ")
         except ValueError:
-            reply_message(event, "ミス\nセット　[数字]\nと入力してね")
+            reply_message(event, "ミス\nセット [数字]\nと入力してね")
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
@@ -146,4 +145,5 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
+    chefs_counter = defaultdict(int)
     app.run(debug=options.debug, port=options.port)
