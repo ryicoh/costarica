@@ -77,7 +77,7 @@ def message_text(event):
 
     if text == '回数':
         counter_str = ''
-        for chef, count in chefs_counter:
+        for chef, count in chefs_counter.items():
             counter_str += f"{chef}: {count}¥n"
         reply_message(event, counter_str)
 
@@ -91,6 +91,18 @@ def message_text(event):
 
             chefs_counter[display_name] += 1
 
+    elif text == 'シェフ':
+        reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
+
+    elif text.split(' ')[0] == 'セット':
+        if isinstance(event.source, SourceUser):
+            display_name = line_bot_api.get_profile(event.source.user_id).display_name
+        try:
+            chefs_counter[display_name] = int(text.split(' ')[1])
+            reply_message(event, "セットされたよ")
+        except Error:
+            reply_message(event, "ミス¥nセット　[数字]¥nと入力してね")
+
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             reply_message(event, 'さらば')
@@ -102,8 +114,6 @@ def message_text(event):
         else:
             reply_message(event, "個人チャットでは退出できなのだ")
 
-    elif text == 'シェフ':
-        reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
 
 
 def reply_message(event, message):
