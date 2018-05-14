@@ -69,12 +69,9 @@ def message_text(event):
     text = event.message.text
     print(event.source.type)
 
-    if isinstance(event.source, SourceGroup):
-        print(f"ユーザーIDは{event.source.user_id}です")
-        display_name = line_bot_api.get_profile(event.source.user_id).display_name
-    else:
-        reply_message(event, 'User IDを設定してね')
-        return
+    print(f"ユーザーIDは{event.source.user_id}です")
+    profile = line_bot_api.get_profile(event.source.user_id)
+    display_name = profile.display_name
 
     if text == 'ヘルプ':
         reply_message(event,
@@ -85,7 +82,7 @@ def message_text(event):
 'bye'  : グループから去ります。""")
 
     elif text == '回数':
-        if chefs_counter:
+        if any(chefs_counter):
             counter_str = ''
             for chef, count in chefs_counter.items():
                 counter_str += f"{chef}: {count}\n"
@@ -108,7 +105,7 @@ def message_text(event):
         print(chefs_counter[display_name])
 
     elif text == 'シェフ':
-        if chefs_counter:
+        if any(chefs_counter):
             reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
         else:
             reply_message(event, 'シェフがいないようだ')
