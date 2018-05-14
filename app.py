@@ -70,15 +70,17 @@ def message_text(event):
 
     if text == 'ヘルプ':
         reply_message(event,
-            """'回数'　: みんなの担当回数が見れるよ。
-            '任せろ': 今日の当番は任せたぜ！
-            'シェフ': 今日のシェフを決めるよ。
-            'bye'  : グループから去ります。""")
+            """'回数'　: 担当回数が見れるよ。
+'任せろ': 料理は任せたぜ！
+'シェフ': 今日のシェフを決めるよ。
+'セット [数字]': 回数を設定
+'bye'  : グループから去ります。""")
 
-    if text == '回数':
+    elif text == '回数':
         counter_str = ''
         for chef, count in chefs_counter.items():
             counter_str += f"{chef}: {count}¥n"
+
         reply_message(event, counter_str)
 
     elif text == '任せろ':
