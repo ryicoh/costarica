@@ -66,8 +66,6 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
-    nonlocal display_name
-
     text = event.message.text
     if isinstance(event.source, SourceUser):
         print(f"ユーザーIDは{event.source.user_id}です")
