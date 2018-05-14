@@ -103,7 +103,7 @@ def message_text(event):
         try:
             chefs_counter[display_name] = int(text.split(' ')[1])
             reply_message(event, "セットされたよ")
-        except Error:
+        except ValueError:
             reply_message(event, "ミス\nセット　[数字]\nと入力してね")
 
     elif text == 'bye':
