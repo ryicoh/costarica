@@ -69,7 +69,7 @@ def message_text(event):
     text = event.message.text
 
     if text == 'ヘルプ':
-        reply_message(
+        reply_message(event,
 """
 '回数'　: みんなの担当回数が見れるよ。
 'シェフ': 今日の当番は任せたぜ！
@@ -81,31 +81,31 @@ def message_text(event):
         message = ''
         for chef, count in chefs_counter:
             message += f"{chef}: {count}¥n"
-        reply_message("message")
+        reply_message(event, message)
 
     elif text == 'シェフ':
         if isinstance(event.source, SourceUser):
             display_name = line_bot_api.get_profile(event.source.user_id).display_name
-            reply_message(f"今日のシェフは{display_name}だ。")
+            reply_message(event, f"今日のシェフは{display_name}だ。")
 
             if randint(0, 10) == 0:
-                reply_message(f"今日のご飯は上手くなるぞ！")
+                reply_message(event, f"今日のご飯は上手くなるぞ！")
 
             chefs_counter[display_name] += 1
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
-            reply_message('さらば')
+            reply_message(event, 'さらば')
             line_bot_api.leave_group(event.source.group_id)
 
         elif isinstance(event.source, SourceRoom):
-            reply_message('さらば')
+            reply_message(event, 'さらば')
 
         else:
-            reply_message("個人チャットでは退出できなのだ")
+            reply_message(event, "個人チャットでは退出できなのだ")
 
 
-def reply_message(message):
+def reply_message(event, message):
     line_bot_api.reply_message(
         event.reply_token, [TextSendMessage(text=message)]
     )
