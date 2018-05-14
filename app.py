@@ -70,7 +70,7 @@ def message_text(event):
     if isinstance(event.source, SourceUser):
         display_name = line_bot_api.get_profile(event.source.user_id).display_name
     else:
-        print(display_name_error)
+        print('display_name_error')
 
     if text == 'ヘルプ':
         reply_message(event,
