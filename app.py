@@ -67,6 +67,8 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     text = event.message.text
+    print(event.source.type)
+
     if isinstance(event.source, SourceUser):
         print(f"ユーザーIDは{event.source.user_id}です")
         display_name = line_bot_api.get_profile(event.source.user_id).display_name
