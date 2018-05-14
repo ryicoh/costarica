@@ -67,6 +67,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     text = event.message.text
+    display_name = "Unnamed"
     if isinstance(event.source, SourceUser):
         display_name = line_bot_api.get_profile(event.source.user_id).display_name
     else:
