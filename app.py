@@ -66,7 +66,7 @@ def message_text(event):
     text = event.message.text
 
     print(dir(event))
-    print(dir(message))
+    print(dir(event.message))
 
     if text == 'profile':
         if isinstance(event.source, SourceUser):
