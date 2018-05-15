@@ -82,8 +82,12 @@ def callback():
 def message_text(event):
     text = event.message.text
 
-    profile = line_bot_api.get_profile(event.source.user_id)
-    display_name = profile.display_name
+    try:
+        display_name = line_bot_api.get_profile(event.source.user_id).display_name
+    except linebot.exceptions.LineBotApiError:
+        reply_message(event, '内部エラーデース')
+        return
+
 
     if text == 'ヘルプ':
         reply_message(event,
