@@ -81,6 +81,10 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     text = event.message.text
+    if ' ' in text and len(text.split(' ')) == 2:
+        text_splited = text.split(' ')
+    elif '　' in text and len(text.split('　')) == 2:
+        text_splited = text.split(' ')
 
     try:
         display_name = line_bot_api.get_profile(event.source.user_id).display_name
@@ -146,9 +150,9 @@ def message_text(event):
                 rep_text = f'今日のシェフは{shef[0]}だ'
         reply_message(event, rep_text)
 
-    elif text.split(' ')[0] == 'セット' and len(text.split(' ')) == 2:
+    elif text_splited[0] == 'セット':
         try:
-            times = int(text.split(' ')[1])
+            times = int(text_splited[1])
         except ValueError:
             reply_message(event, "ミス\nセット [数字]\nと入力してね")
             return
@@ -166,9 +170,9 @@ def message_text(event):
 
         reply_message(event, "セットされたよ")
 
-    elif text.split(' ')[0] == 'エイリアス' and len(text.split(' ')) == 2:
+    elif text_splited[0] == 'エイリアス':
         try:
-            alias_name = str(text.split(' ')[1])
+            alias_name = str(text_splited[1])
         except ValueError:
             reply_message(event, 'エラーですな')
             return
