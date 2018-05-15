@@ -7,6 +7,8 @@ import tempfile
 from argparse import ArgumentParser
 from collections import defaultdict
 from random import randint
+import sqlite3
+from contextlib import closing
 
 from flask import Flask, request, abort
 
@@ -45,6 +47,8 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+dbname = 'database.db'
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -66,12 +70,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
-    global chefs_counter
-
     text = event.message.text
-    print(event.source.type)
 
-    print(f"ユーザーIDは{event.source.user_id}です")
     profile = line_bot_api.get_profile(event.source.user_id)
     display_name = profile.display_name
 
@@ -84,17 +84,18 @@ def message_text(event):
 'bye'  : グループから去ります。""")
 
     elif text == '回数':
-        print(id(chefs_counter))
-        print(chefs_counter)
-        if any(chefs_counter):
-            counter_str = ''
-            for chef, count in chefs_counter.items():
-                counter_str += f"{chef}: {count}\n"
-            reply_message(event, counter_str)
+        counter_str = ''
+        with sqlite3.connect(dbname) as con:
+            cur = con.cursor()
+        #     cur.execute(f"insert into shefs values ({display_name}, "", 1)")
+            for shef in cur.execute(f"select * from shefs"):
+                counter_str += shef
+            con.commit()
 
-        else:
+        if counter_str == '':
             reply_message(event, 'シェフがいないようだ')
-
+        else:
+            reply_message(event, counter_str)
 
     elif text == '任せろ':
         reply_message(event, f"今日のシェフは{display_name}だ")
@@ -102,26 +103,29 @@ def message_text(event):
         if randint(0, 10) == 0:
             reply_message(event, '今日のご飯は上手くなるぞ！')
 
-        print("実行前: ", end='')
-        print(chefs_counter[display_name])
-        chefs_counter[display_name] += 1
-        print("実行後: ", end='')
-        print(chefs_counter[display_name])
+        with sqlite3.connect(dbname) as con:
+            cur = con.cursor()
+            shefs = list(cur.execute(f"select {display_name} from shefs"))
+            print(shefs)
+            # 
+            # if cur.execute(f"select {display_name} from shefs"):
+            #     print(shefs)
+            # else:
+            #     print(shefs)
+            # con.commit()
 
-    elif text == 'シェフ':
-        print(id(chefs_counter))
-        print(chefs_counter)
-        if any(chefs_counter):
-            reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
-        else:
-            reply_message(event, 'シェフがいないようだ')
-
-    elif text.split(' ')[0] == 'セット':
-        try:
-            chefs_counter[display_name] = int(text.split(' ')[1])
-            reply_message(event, "セットされたよ")
-        except ValueError:
-            reply_message(event, "ミス\nセット [数字]\nと入力してね")
+    # elif text == 'シェフ':
+    #     if any(chefs_counter):
+    #         reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
+    #     else:
+    #         reply_message(event, 'シェフがいないようだ')
+    #
+    # elif text.split(' ')[0] == 'セット':
+    #     try:
+    #         chefs_counter[display_name] = int(text.split(' ')[1])
+    #         reply_message(event, "セットされたよ")
+    #     except ValueError:
+    #         reply_message(event, "ミス\nセット [数字]\nと入力してね")
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
@@ -133,7 +137,6 @@ def message_text(event):
 
         else:
             reply_message(event, "個人チャットでは退出できなのだ")
-
 
 
 def reply_message(event, message):
@@ -150,7 +153,9 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    chefs_counter = defaultdict(int)
-    print("chefs_counterが定義されるぞ！")
+    with sqlite3.connect(dbname) as con:
+        cur = con.cursor()
+        cur.execute("create table shefs (display_name text, alias_name text, times integer)")
+        con.commit()
 
     app.run(debug=options.debug, port=options.port)
