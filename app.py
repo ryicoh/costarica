@@ -119,13 +119,8 @@ def message_text(event):
                 print(shefs[0])
             else:
                 print('ないので作ります')
-
-            #
-            # if cur.execute(f"select {display_name} from shefs"):
-            #     print(shefs)
-            # else:
-            #     print(shefs)
-            # con.commit()
+                cur.execute(f"insert into shefs values ('{display_name}', '', 1)")
+            con.commit()
 
     # elif text == 'シェフ':
     #     if any(chefs_counter):
