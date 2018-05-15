@@ -95,6 +95,7 @@ def message_text(event):
 '任せろ': 料理は任せたぜ！
 'シェフ': 今日のシェフを決めるよ。
 'セット [数字]': 回数を設定
+'エイリアス [名前]': 名前変更
 'bye'  : グループから去ります。""")
 
     elif text == '回数':
@@ -102,41 +103,50 @@ def message_text(event):
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
             for shef in cur.execute(f"select * from shefs"):
-                counter_str += f"{shef[0]}: {shef[2]}\n"
+                if shef[1]:
+                    counter_str += f"{shef[1]}: {shef[2]}\n"
+                elif:
+                    counter_str += f"{shef[0]}: {shef[2]}\n"
 
         if counter_str == '':
             reply_message(event, 'シェフがいないようだ')
         else:
-            reply_message(event, counter_str)
+            reply_message(event, counter_str[:-1])
 
     elif text == '任せろ':
-        reply_message(event, f"今日のシェフは{display_name}だ")
-
-        if randint(0, 10) == 0:
-            reply_message(event, '今日のご飯は上手くなるぞ！')
-
+        rep_text = f"今日のシェフは{display_name}だ"
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
             shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
             if shefs and len(shefs) == 1:
                 print(f"{shefs[0][0]}の回数は{shefs[0][2]}です。")
                 cur.execute(f"update shefs set times = {shefs[0][2] + 1} where display_name = '{display_name}'")
+                if shefs[0][1]:
+                    rep_text = f"今日のシェフは{shefs[0][1]}だ"
             else:
                 print('ないので作ります')
                 cur.execute(f"insert into shefs values ('{display_name}', '', 1)")
             con.commit()
 
+        if randint(0, 9) == 0:
+            rep_text += '\n今日のご飯は上手くなるぞ！'
+        reply_message(event, rep_text)
+
     elif text == 'シェフ':
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
-            chefs_counter = (shef[2] for shef in cur.execute(f"select * from shefs"))
+            chefs_counter = cur.execute(f"select * from shefs")
 
+        rep_text = 'シェフがいないようだ'
         if any(chefs_counter):
-            reply_message(event, f'今日のシェフは{min(chefs_counter)}だ')
-        else:
-            reply_message(event, 'シェフがいないようだ')
+            shef = min(chefs_counter, lambda x: x[2])
+            if shef[1]:
+                rep_text = f'今日のシェフは{shef[1]}だ'
+            else:
+                rep_text = f'今日のシェフは{shef[0]}だ'
+        reply_message(event, rep_text)
 
-    elif text.split(' ')[0] == 'セット':
+    elif text.split(' ')[0] == 'セット' and len(text.split(' ')) == 2:
         try:
             with sqlite3.connect(dbname) as con:
                 cur = con.cursor()
@@ -153,6 +163,18 @@ def message_text(event):
         except ValueError:
             reply_message(event, "ミス\nセット [数字]\nと入力してね")
 
+    elif text.split(' ')[0] == 'エイリアス' and len(text.split(' ')) == 2:
+        try:
+            with sqlite3.connect(dbname) as con:
+                cur = con.cursor()
+                shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
+                if shefs and len(shefs) == 1:
+                    print(f"shefs: {shefs}")
+                    cur.execute(f"update shefs set alias_name = {int(text.split(' ')[1])} where display_name = '{display_name}'")
+                else:
+                    reply_message(event, 'あなたはシェフではないな？')
+                con.commit()
+
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             reply_message(event, 'さらば')
@@ -163,6 +185,7 @@ def message_text(event):
 
         else:
             reply_message(event, "個人チャットでは退出できなのだ")
+
 
 
 def reply_message(event, message):
