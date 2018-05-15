@@ -139,7 +139,7 @@ def message_text(event):
 
         rep_text = 'シェフがいないようだ'
         if any(chefs_counter):
-            shef = min(chefs_counter, lambda x: x[2])
+            shef = min(chefs_counter, key=lambda x: x[2])
             if shef[1]:
                 rep_text = f'今日のシェフは{shef[1]}だ'
             else:
