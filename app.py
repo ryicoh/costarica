@@ -116,7 +116,8 @@ def message_text(event):
             cur = con.cursor()
             shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
             if shefs and len(shefs) == 1:
-                print(shefs[0])
+                print(f"{shefs[0][0]}の回数は{shefs[0][2]}です。")
+                cur.execute(f"update shefs set times = {shefs[0][2] + 1} where display_name = '{display_name}'")
             else:
                 print('ないので作ります')
                 cur.execute(f"insert into shefs values ('{display_name}', '', 1)")
