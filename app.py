@@ -81,10 +81,12 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     text = event.message.text
+
+    text_splited = ''
     if ' ' in text and len(text.split(' ')) == 2:
         text_splited = text.split(' ')
     elif '　' in text and len(text.split('　')) == 2:
-        text_splited = text.split(' ')
+        text_splited = text.split('　')
 
     try:
         display_name = line_bot_api.get_profile(event.source.user_id).display_name
