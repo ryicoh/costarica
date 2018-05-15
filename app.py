@@ -34,6 +34,7 @@ app = Flask(__name__)
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
+
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
@@ -43,9 +44,6 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
-
-print("chefs_counterが定義されるぞ！")
-chefs_counter = defaultdict(int)
 
 
 @app.route("/callback", methods=['POST'])
@@ -151,5 +149,8 @@ if __name__ == "__main__":
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
+
+    chefs_counter = defaultdict(int)
+    print("chefs_counterが定義されるぞ！")
 
     app.run(debug=options.debug, port=options.port)
