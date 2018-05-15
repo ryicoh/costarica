@@ -107,7 +107,7 @@ def message_text(event):
             cur = con.cursor()
             shefs = list(cur.execute(f"select {display_name} from shefs"))
             print(shefs)
-            # 
+            #
             # if cur.execute(f"select {display_name} from shefs"):
             #     print(shefs)
             # else:
@@ -157,5 +157,7 @@ if __name__ == "__main__":
         cur = con.cursor()
         cur.execute("create table shefs (display_name text, alias_name text, times integer)")
         con.commit()
+
+    print("sqlite3の初期化")
 
     app.run(debug=options.debug, port=options.port)
