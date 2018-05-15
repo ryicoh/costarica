@@ -151,6 +151,7 @@ def message_text(event):
             times = int(text.split(' ')[1])
         except ValueError:
             reply_message(event, "ミス\nセット [数字]\nと入力してね")
+            return
 
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
@@ -170,13 +171,15 @@ def message_text(event):
             alias_name = str(text.split(' ')[1])
         except ValueError:
             reply_message(event, 'エラーですな')
+            return
 
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
             shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
             if shefs and len(shefs) == 1:
                 print(f"shefs: {shefs}")
-                cur.execute(f"update shefs set alias_name = {alias_name} where display_name = '{display_name}'")
+                cur.execute(f"update shefs set alias_name = '{alias_name}' where display_name = '{display_name}'")
+                reply_message(event, f"alias {alias_name} => {display_name}")
             else:
                 reply_message(event, 'あなたはシェフではないな？')
             con.commit()
