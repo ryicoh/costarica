@@ -105,7 +105,7 @@ def message_text(event):
             for shef in cur.execute(f"select * from shefs"):
                 if shef[1]:
                     counter_str += f"{shef[1]}: {shef[2]}\n"
-                elif:
+                else:
                     counter_str += f"{shef[0]}: {shef[2]}\n"
 
         if counter_str == '':
@@ -148,32 +148,38 @@ def message_text(event):
 
     elif text.split(' ')[0] == 'セット' and len(text.split(' ')) == 2:
         try:
-            with sqlite3.connect(dbname) as con:
-                cur = con.cursor()
-                shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
-                if shefs and len(shefs) == 1:
-                    print(f"shefs: {shefs}")
-                    cur.execute(f"update shefs set times = {int(text.split(' ')[1])} where display_name = '{display_name}'")
-                else:
-                    print('ないので作ります')
-                    cur.execute(f"insert into shefs values ('{display_name}', '', {int(text.split(' ')[1])})")
-                con.commit()
-
-            reply_message(event, "セットされたよ")
+            times = int(text.split(' ')[1])
         except ValueError:
             reply_message(event, "ミス\nセット [数字]\nと入力してね")
 
+        with sqlite3.connect(dbname) as con:
+            cur = con.cursor()
+            shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
+            if shefs and len(shefs) == 1:
+                print(f"shefs: {shefs}")
+                cur.execute(f"update shefs set times = {times} where display_name = '{display_name}'")
+            else:
+                print('ないので作ります')
+                cur.execute(f"insert into shefs values ('{display_name}', '', {times})")
+            con.commit()
+
+        reply_message(event, "セットされたよ")
+
     elif text.split(' ')[0] == 'エイリアス' and len(text.split(' ')) == 2:
         try:
-            with sqlite3.connect(dbname) as con:
-                cur = con.cursor()
-                shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
-                if shefs and len(shefs) == 1:
-                    print(f"shefs: {shefs}")
-                    cur.execute(f"update shefs set alias_name = {int(text.split(' ')[1])} where display_name = '{display_name}'")
-                else:
-                    reply_message(event, 'あなたはシェフではないな？')
-                con.commit()
+            alias_name = str(text.split(' ')[1])
+        except ValueError:
+            reply_message(event, 'エラーですな')
+
+        with sqlite3.connect(dbname) as con:
+            cur = con.cursor()
+            shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
+            if shefs and len(shefs) == 1:
+                print(f"shefs: {shefs}")
+                cur.execute(f"update shefs set alias_name = {alias_name} where display_name = '{display_name}'")
+            else:
+                reply_message(event, 'あなたはシェフではないな？')
+            con.commit()
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
