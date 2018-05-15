@@ -82,7 +82,7 @@ def callback():
 def message_text(event):
     text = event.message.text
 
-    text_splited = ('', '')
+    text_splited = ('', '')
     if ' ' in text and len(text.split(' ')) == 2:
         text_splited = text.split(' ')
     elif '　' in text and len(text.split('　')) == 2:
