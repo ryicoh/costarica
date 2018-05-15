@@ -51,7 +51,11 @@ handler = WebhookHandler(channel_secret)
 dbname = 'database.db'
 with sqlite3.connect(dbname) as con:
     cur = con.cursor()
-    cur.execute("create table shefs (display_name text, alias_name text, times integer)")
+    try:
+        cur.execute("create table shefs (display_name text, alias_name text, times integer)")
+    except sqlite3.OperationalError:
+        print("すでにデータベースが存在します。")
+
     con.commit()
     print("sqlite3の初期化")
 
@@ -158,5 +162,5 @@ if __name__ == "__main__":
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
-    
+
     app.run(debug=options.debug, port=options.port)
