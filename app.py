@@ -97,7 +97,6 @@ def message_text(event):
         counter_str = ''
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
-        #     cur.execute(f"insert into shefs values ({display_name}, "", 1)")
             for shef in cur.execute(f"select * from shefs"):
                 counter_str += shef
             con.commit()
@@ -115,8 +114,12 @@ def message_text(event):
 
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
-            shefs = list(cur.execute(f"select {display_name} from shefs"))
-            print(shefs)
+            shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
+            if shefs and len(shefs) == 1:
+                print(shefs[0])
+            else:
+                print('ないので作ります')
+
             #
             # if cur.execute(f"select {display_name} from shefs"):
             #     print(shefs)
