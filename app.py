@@ -98,8 +98,7 @@ def message_text(event):
         with sqlite3.connect(dbname) as con:
             cur = con.cursor()
             for shef in cur.execute(f"select * from shefs"):
-                counter_str += shef
-            con.commit()
+                counter_str += f"{shef[0]}: {shef[2]}\n"
 
         if counter_str == '':
             reply_message(event, 'シェフがいないようだ')
@@ -123,18 +122,32 @@ def message_text(event):
                 cur.execute(f"insert into shefs values ('{display_name}', '', 1)")
             con.commit()
 
-    # elif text == 'シェフ':
-    #     if any(chefs_counter):
-    #         reply_message(event, f'今日のシェフは{min(chefs_counter.items(), key=lambda x:x[1])[0]}だ')
-    #     else:
-    #         reply_message(event, 'シェフがいないようだ')
-    #
-    # elif text.split(' ')[0] == 'セット':
-    #     try:
-    #         chefs_counter[display_name] = int(text.split(' ')[1])
-    #         reply_message(event, "セットされたよ")
-    #     except ValueError:
-    #         reply_message(event, "ミス\nセット [数字]\nと入力してね")
+    elif text == 'シェフ':
+        with sqlite3.connect(dbname) as con:
+            cur = con.cursor()
+            chefs_counter = (shef[2] for shef in cur.execute(f"select * from shefs"))
+
+        if any(chefs_counter):
+            reply_message(event, f'今日のシェフは{min(chefs_counter)}だ')
+        else:
+            reply_message(event, 'シェフがいないようだ')
+
+    elif text.split(' ')[0] == 'セット':
+        try:
+            with sqlite3.connect(dbname) as con:
+                cur = con.cursor()
+                shefs = list(cur.execute(f"select * from shefs where display_name = '{display_name}'"))
+                if shefs and len(shefs) == 1:
+                    print(f"shefs: {shefs}")
+                    cur.execute(f"update shefs set times = {int(text.split(' ')[1])} where display_name = '{display_name}'")
+                else:
+                    print('ないので作ります')
+                    cur.execute(f"insert into shefs values ('{display_name}', '', {int(text.split(' ')[1])})")
+                con.commit()
+
+            reply_message(event, "セットされたよ")
+        except ValueError:
+            reply_message(event, "ミス\nセット [数字]\nと入力してね")
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
