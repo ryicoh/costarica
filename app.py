@@ -44,7 +44,7 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
-print(f"{chefs_counter}が定義されるぞ！")
+print("chefs_counterが定義されるぞ！")
 chefs_counter = defaultdict(int)
 
 
