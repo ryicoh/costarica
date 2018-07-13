@@ -100,7 +100,7 @@ def message_text(event):
             reply_message(event, 'エラーですな')
             return
 
-        shefs = Shef.query.filter(Shef.name==Shef.name, Shef.group==group_id).all()
+        shefs = Shef.find_by_name(group_id, display_name)
         
         if shefs and len(shefs) == 1:
             shef = shefs[0]
