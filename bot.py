@@ -55,7 +55,7 @@ def message_text(event):
         def create_shef():
             return Shef(display_name, 1, group_id)
             
-        shef = Shef.find_by_name(group_id, display_name)
+        shef = Shef.find_by_name(group_id, display_name, create_shef)
         shef.times += 1
         shef.commit()
 
@@ -66,7 +66,7 @@ def message_text(event):
         reply_message(event, rep_text)
 
     elif text == 'シェフ':
-        shefs = Shef.find_by_group(display_name)
+        shefs = Shef.find_by_group(group_id)
         rep_text = 'シェフがいないようだ'
         if shefs:
             todays_shef = min(shefs, key=lambda shef: shef.times)
@@ -80,11 +80,14 @@ def message_text(event):
             reply_message(event, "ミス\nセット [数字]\nと入力してね")
             return
 
-        shef = Shef.find_by_name(group_id, display_name)
+        def create_shef():
+            return Shef(display_name, times, group_id)
+        
+        shef = Shef.find_by_name(group_id, display_name, create_shef)
         shef.times = times
         shef.commit()
 
-        reply_message(event, "セットされたよ")
+        reply_message(event, "成功！")
 
     elif text_splited[0] == 'エイリアス':
         try:
@@ -93,10 +96,10 @@ def message_text(event):
             reply_message(event, 'エラーですな')
             return
             
-        def create_shef():
+        def notfound():
             reply_message(event, "シェフではないな？")
             
-        shef = Shef.find_by_name(group_id, display_name)
+        shef = Shef.find_by_name(group_id, display_name, notfound)
         shef.alias_name = alias_name
         shef.commit()
         reply_message(event, f"alias {alias_name} => {display_name}")
