@@ -52,7 +52,7 @@ def message_text(event):
             reply_message(event, shefs_str[:-1])
 
     elif text == '任せろ':
-        def create_shef:
+        def create_shef():
             return Shef(display_name, 1, group_id)
             
         shef = Shef.find_by_name(group_id, display_name)
@@ -93,7 +93,7 @@ def message_text(event):
             reply_message(event, 'エラーですな')
             return
             
-        def create_shef:
+        def create_shef():
             reply_message(event, "シェフではないな？")
             
         shef = Shef.find_by_name(group_id, display_name)
