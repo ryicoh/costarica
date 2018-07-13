@@ -30,11 +30,10 @@ class Shef(db.Model):
 
         if shefs and len(shefs) == 1:
             shef = shefs[0]
+            return shef
         else:
             if func:
-                func()
-        return shef
-
+                return func()
 
     def __repr__(self):
         return f'<Shef {self.name}:{self.times}>'
