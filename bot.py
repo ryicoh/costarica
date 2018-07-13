@@ -52,15 +52,11 @@ def message_text(event):
             reply_message(event, shefs_str[:-1])
 
     elif text == '任せろ':
-        shefs = Shef.find_by_name(group_id, display_name)
-
-        if shefs and len(shefs) == 1:
-            shef = shefs[0]
-            shef.times += 1
+        def create_shef:
+            return Shef(display_name, 1, group_id)
             
-        else:
-            shef = Shef(display_name, 1, group_id)
-
+        shef = Shef.find_by_name(group_id, display_name)
+        shef.times += 1
         shef.commit()
 
         rep_text = f"今日のシェフは{shef.alias_name or shef.name}だ"
@@ -84,11 +80,8 @@ def message_text(event):
             reply_message(event, "ミス\nセット [数字]\nと入力してね")
             return
 
-        shefs = Shef.find_by_name(group_id, display_name)
-
-        if shefs and len(shefs) == 1:
-            shef = shefs[0]
-            shef.times = times
+        shef = Shef.find_by_name(group_id, display_name)
+        shef.times = times
         shef.commit()
 
         reply_message(event, "セットされたよ")
@@ -99,16 +92,14 @@ def message_text(event):
         except ValueError:
             reply_message(event, 'エラーですな')
             return
-
-        shefs = Shef.find_by_name(group_id, display_name)
-        
-        if shefs and len(shefs) == 1:
-            shef = shefs[0]
-            shef.alias_name = alias_name
-            shef.commit()
-            reply_message(event, f"alias {alias_name} => {display_name}")
-        else:
-            reply_message(event, 'あなたはシェフではないな？')
+            
+        def create_shef:
+            reply_message(event, "シェフではないな？")
+            
+        shef = Shef.find_by_name(group_id, display_name)
+        shef.alias_name = alias_name
+        shef.commit()
+        reply_message(event, f"alias {alias_name} => {display_name}")
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
