@@ -26,7 +26,7 @@ class Shef(db.Model):
 
     @classmethod
     def find_by_name(cls, group_id, name, func=None):
-        Shef.query.filter(Shef.name==name, Shef.group==group_id).all()
+        shefs = Shef.query.filter(Shef.name==name, Shef.group==group_id).all()
 
         if shefs and len(shefs) == 1:
             shef = shefs[0]
