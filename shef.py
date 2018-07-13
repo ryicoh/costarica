@@ -25,8 +25,14 @@ class Shef(db.Model):
         return Shef.query.filter(Shef.group==group_id).all()
 
     @classmethod
-    def find_by_name(cls, group_id, name):
-        return Shef.query.filter(Shef.name==name, Shef.group==group_id).all()
+    def find_by_name(cls, group_id, name, func):
+        Shef.query.filter(Shef.name==name, Shef.group==group_id).all()
+
+        if shefs and len(shefs) == 1:
+            shef = shefs[0]
+        else:
+            func()
+        return shef
 
 
     def __repr__(self):
