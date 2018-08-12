@@ -2,3 +2,8 @@ __pycache__/
 .python-version
 
 .vscode/
+.DS_Store
+
+app.yaml
+
+cloud_sql_proxy

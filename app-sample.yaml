@@ -1,0 +1,17 @@
+runtime: python37
+api_version: 1
+
+handlers:
+- url: .*
+  script: main.py
+
+env_variables:
+    # Replace user, password, database, and instance connection name with the values obtained
+    # when configuring your Cloud SQL instance.
+    SQLALCHEMY_DATABASE_URI: >-
+
+    LINE_CHANNEL_SECRET: 
+    LINE_CHANNEL_ACCESS_TOKEN: >-
+
+beta_settings:
+    cloud_sql_instances:
