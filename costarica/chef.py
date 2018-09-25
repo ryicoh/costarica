@@ -1,9 +1,8 @@
-from settings import db
+from costarica.settings import db
+import sqlalchemy
 
 
-class Shef(db.Model):
-    __tablename__ = 'shefs'
-
+class Chef(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     alias_name = db.Column(db.String(80))
@@ -16,27 +15,31 @@ class Shef(db.Model):
         self.times = int(times)
         self.group = str(group)
 
+    def __repr__(self):
+        return f'<Chef {self.name}:{self.times}>'
+
     def commit(self):
         db.session.add(self)
         db.session.commit()
 
     @classmethod
     def find_by_group(cls, group_id):
-        return Shef.query.filter(Shef.group==group_id).all()
+        return Chef.query.filter(Chef.group==group_id).all()
 
     @classmethod
     def find_by_name(cls, group_id, name, func=None):
-        shefs = Shef.query.filter(Shef.name==name, Shef.group==group_id).all()
+        chefs = Chef.query.filter(Chef.name==name, Chef.group==group_id).all()
 
-        if shefs and len(shefs) == 1:
-            shef = shefs[0]
-            return shef
+        if chefs and len(chefs) == 1:
+            chef = chefs[0]
+            return chef
         else:
             if func:
                 return func()
 
-    def __repr__(self):
-        return f'<Shef {self.name}:{self.times}>'
-    
-db.create_all()
 
+try:
+    db.create_all()
+    print("Created \"chef\" table.")
+except sqlalchemy.exc.OperationalError:
+    print("Cannot connect to db.")

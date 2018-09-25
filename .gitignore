@@ -3,7 +3,10 @@ __pycache__/
 
 .vscode/
 .DS_Store
+.idea
 
 app.yaml
+docker-compose.yml
 
 cloud_sql_proxy
+data/

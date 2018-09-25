@@ -1,12 +1,13 @@
 import os
 import socket
 
-from flask import Flask, request, abort
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from linebot import LineBotApi, WebhookHandler
 
 
 app = Flask(__name__)
+
 
 def is_ipv6(addr):
     """Checks if a given address is an IPv6 address."""
@@ -17,6 +18,7 @@ def is_ipv6(addr):
         return False
 
 
+# PostgreSQL
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', None)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

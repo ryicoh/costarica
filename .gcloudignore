@@ -18,5 +18,13 @@ __pycache__/
 
 
 .python-version
+
 app-sample.yaml
+
+docker-compose.yml
+docker-compose-sample.yml
+Dockerfile
+
+
+data/
 cloud_sql_proxy
