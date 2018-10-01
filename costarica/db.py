@@ -2,7 +2,7 @@ import os
 
 from flask_sqlalchemy import SQLAlchemy
 
-from .web import app
+from costarica.web import app
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', None)

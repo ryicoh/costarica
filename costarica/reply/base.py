@@ -1,9 +1,12 @@
 from abc import ABCMeta, abstractmethod
 
 from linebot.exceptions import LineBotApiError
-from linebot.models import TextSendMessage
+from linebot.models import (
+    TextSendMessage, SourceUser,
+    SourceGroup, SourceRoom
+)
 
-from ..linebot import line_bot_api
+from costarica.line import line_bot_api
 
 
 class BaseCommand(metaclass=ABCMeta):
@@ -11,40 +14,46 @@ class BaseCommand(metaclass=ABCMeta):
     def __init__(self):
         self._argument = None
         self._event = None
+        self._user_id = None
         self._group_id = None
+        self._group_name = None
         self._display_name = None
 
     def execute(self, event, command_name, argument):
-        _command_name = self._get_command_name()
-
-        if type(_command_name) == str and command_name != _command_name:
-            return
-
-        if type(_command_name) and command_name not in _command_name:
+        if command_name not in self._get_command_names():
             return
  
         self._event = event
         self._argument = argument
+        self._user_id = event.source.user_id
+
+        if isinstance(self._event.source, SourceRoom):
+            self._send_message('すまぬぅ！ \nルームには対応していません。')
+            return
+
         try:
-            self._display_name = line_bot_api.get_profile(event.source.user_id).display_name
+            self._display_name = line_bot_api.get_profile(
+                                     self._user_id).display_name
         except LineBotApiError:
             self._send_message('CostaRicaをともだちに追加してね。')
             return
 
-        try:
-            self._group_id = event.source.group_id
-        except LineBotApiError:
-            self._send_message(event, 'グループIDが取得できません。')
-            return
+        if isinstance(self._event.source, SourceUser):
+            self._execute_personal()
 
-        self._execute()
+        elif isinstance(self._event.source, SourceGroup):
+            self._group_id = event.source.group_id
+            self._execute_group()
 
     @abstractmethod
-    def _execute(self):
+    def _execute_group(self):
         raise NotImplemented()
 
+    def _execute_personal(self):
+        pass
+
     @abstractmethod
-    def _get_command_name(self):
+    def _get_command_names(self) -> list:
         raise NotImplemented()
 
     def _send_message(self, text):

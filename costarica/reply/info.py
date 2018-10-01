@@ -1,12 +1,12 @@
 from linebot.models import SourceGroup, SourceRoom
 
-from ..linebot import line_bot_api
-from .base import BaseCommand
+from costarica.line import line_bot_api
+from costarica.reply.base import BaseCommand
 import textwrap
 
 
 class Info(BaseCommand):
-    def _execute(self):
+    def _execute_group(self):
         text = """
             '回数'　: 担当回数が見れるよ
             '任せろ': 料理は任せたぜ！
@@ -19,22 +19,29 @@ class Info(BaseCommand):
         text = textwrap.dedent(text).strip()
         self._send_message(text)
 
-    def _get_command_name(self):
+    def _execute_personal(self):
+        text = """
+            '回数'　: 担当回数が見れるよ
+            """
+        text = textwrap.dedent(text).strip()
+        self._send_message(text)
+
+    def _get_command_names(self):
         return ['ヘルプ', 'へるぷ', 'help']
 
 
 class Removal(BaseCommand):
-    def _execute(self):
-        text = '個人チャットでは退出できなのだ'
+    def _execute_group(self):
         if isinstance(self._event.source, SourceGroup):
-            text = 'さようなら〜\nまた会えるといいね。'
+            self._send_message('さようなら〜\nまた会えるといいね。')
             line_bot_api.leave_group(self._event.source.group_id)
 
         elif isinstance(self._event.source, SourceRoom):
-            text = 'さらば'
+            self._send_message('さらば')
             line_bot_api.leave_room(self._event.source.group_id)
 
-        self._send_message(text)
+    def _execute_personal(self):
+        self._send_message('個人チャットでは退出できなのだ')
 
-    def _get_command_name(self):
+    def _get_command_names(self):
         return ['bye']

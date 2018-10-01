@@ -2,10 +2,10 @@ from flask import Flask
 from flask import request, abort
 from linebot.exceptions import InvalidSignatureError
 
-from .linebot import handler
+from costarica.line import handler
 
 
-app: Flask = Flask(__name__)
+app = Flask(__name__)
 
 
 @app.route('/')

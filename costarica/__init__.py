@@ -1,3 +1,4 @@
-from .linebot import message_text
-from .chef import Chef
-from .web import app
+import costarica.line
+from costarica.message import message_text
+import costarica.chef
+from costarica.web import app
