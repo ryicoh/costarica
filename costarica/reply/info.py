@@ -1,6 +1,6 @@
 from linebot.models import SourceGroup, SourceRoom
 
-from costarica.settings import line_bot_api
+from ..linebot import line_bot_api
 from .base import BaseCommand
 import textwrap
 
@@ -15,25 +15,26 @@ class Info(BaseCommand):
             'エイリアス [名前]': 名前変更
             'bye'  : グループから去ります
         """
+
         text = textwrap.dedent(text).strip()
         self._send_message(text)
 
     def _get_command_name(self):
-        return ["ヘルプ", "へるぷ", "help"]
+        return ['ヘルプ', 'へるぷ', 'help']
 
 
 class Removal(BaseCommand):
     def _execute(self):
         text = '個人チャットでは退出できなのだ'
+        if isinstance(self._event.source, SourceGroup):
+            text = 'さようなら〜\nまた会えるといいね。'
+            line_bot_api.leave_group(self._event.source.group_id)
 
-        if isinstance(self.event.source, SourceGroup):
-            text = 'さようなら〜 また会えるといいね。'
-            line_bot_api.leave_group(self.event.source.group_id)
-
-        elif isinstance(self.event.source, SourceRoom):
+        elif isinstance(self._event.source, SourceRoom):
             text = 'さらば'
+            line_bot_api.leave_room(self._event.source.group_id)
 
-        self.reply_message(text)
+        self._send_message(text)
 
     def _get_command_name(self):
-        return "bye"
+        return ['bye']

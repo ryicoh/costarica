@@ -9,12 +9,12 @@ class CountGetting(BaseCommand):
             chefs_str += f'{chef.alias_name or chef.name}: {chef.times}回\n'
 
         if chefs_str == '':
-            self._send_message('シェフがいないようだ')
-        else:
-            self._send_message(chefs_str.rstrip())
+            chefs_str = 'シェフがいないようだ'
+
+        self._send_message(chefs_str.rstrip())
 
     def _get_command_name(self):
-        return "回数"
+        return ['回数', 'かいすう']
 
 
 class CountSetting(BaseCommand):
@@ -22,7 +22,7 @@ class CountSetting(BaseCommand):
         try:
             times = int(self._argument)
         except ValueError:
-            self._send_message("ミス\nセット [数字]\nと入力してね")
+            self._send_message('ミス\nセット [数字]\nと入力してね')
             return
 
         def create_chef():
@@ -32,7 +32,7 @@ class CountSetting(BaseCommand):
         chef.times = times
         chef.commit()
 
-        self._send_message("成功！")
+        self._send_message('成功！')
 
     def _get_command_name(self):
-        return "セット"
+        return 'セット'

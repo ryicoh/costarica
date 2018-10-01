@@ -26,5 +26,4 @@ docker-compose-sample.yml
 Dockerfile
 
 
-data/
 cloud_sql_proxy

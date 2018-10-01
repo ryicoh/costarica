@@ -9,4 +9,3 @@ app.yaml
 docker-compose.yml
 
 cloud_sql_proxy
-data/

@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from linebot.exceptions import LineBotApiError
 from linebot.models import TextSendMessage
 
-from costarica.settings import line_bot_api
+from ..linebot import line_bot_api
 
 
 class BaseCommand(metaclass=ABCMeta):

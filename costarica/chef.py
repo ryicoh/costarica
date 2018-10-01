@@ -1,5 +1,6 @@
-from costarica.settings import db
-import sqlalchemy
+from sqlalchemy.exc import OperationalError
+
+from .db import db
 
 
 class Chef(db.Model):
@@ -40,6 +41,6 @@ class Chef(db.Model):
 
 try:
     db.create_all()
-    print("Created \"chef\" table.")
-except sqlalchemy.exc.OperationalError:
-    print("Cannot connect to db.")
+    print('Created "chef" table.')
+except OperationalError:
+    print('Cannot connect to db.')

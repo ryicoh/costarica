@@ -13,14 +13,14 @@ class TodayChef(BaseCommand):
         chef.times += 1
         chef.commit()
 
-        rep_text = f"今日のシェフは{chef.alias_name or chef.name}だ"
+        rep_text = f'今日のシェフは{chef.alias_name or chef.name}だ'
 
         if randint(0, 9) == 0:
             rep_text += '\n今日のご飯は上手くなるぞ！'
         self._send_message(rep_text)
 
     def _get_command_name(self):
-        return ["任せろ", "まかせろ", "俺がやるぜ"]
+        return ['任せろ', 'まかせろ', '俺がやるぜ']
 
 
 class TodayChefChoice(BaseCommand):
@@ -33,8 +33,8 @@ class TodayChefChoice(BaseCommand):
         self._send_message(text)
 
     def _get_command_name(self):
-        return ["シェフだれ", "シェフだれ?", "シェフだれ？",
-                "シェフ誰", "シェフ誰?", "シェフ誰？"]
+        return ['シェフだれ', 'シェフだれ?', 'シェフだれ？',
+                'シェフ誰', 'シェフ誰?', 'シェフ誰？']
 
 
 class ChefAlias(BaseCommand):
@@ -46,13 +46,13 @@ class ChefAlias(BaseCommand):
             return
 
         def not_found():
-            self._send_message("シェフではないな？")
+            self._send_message('シェフではないな？')
 
         chef = Chef.find_by_name(self._group_id, self._display_name, not_found)
         chef.alias_name = alias_name
         chef.commit()
 
-        self._send_message(f"{alias_name}とお呼びしますね！")
+        self._send_message(f'{alias_name}とお呼びしますね！')
 
     def _get_command_name(self):
-        return ["エイリアス", "alias"]
+        return ['エイリアス', 'alias']
