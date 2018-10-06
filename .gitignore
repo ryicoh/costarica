@@ -7,5 +7,7 @@ __pycache__/
 
 app.yaml
 docker-compose.yml
+docker-compose_debug.yml
+docker-compose_product.yml
 
 cloud_sql_proxy
