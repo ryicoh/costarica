@@ -28,15 +28,19 @@ class TodayChef(BaseCommand):
 class TodayChefChoice(BaseCommand):
     def _execute_group(self):
         chefs = Chef.find_by_group(self._group_id)
-        text = 'シェフがいないようだ'
+        text = 'メンバーがいないようだ'
         if chefs:
             today_chef = min(chefs, key=lambda chef: chef.times)
             text = today_chef.alias_name or today_chef.display_name
         self._send_message(text)
 
     def _get_command_names(self):
-        return ['シェフだれ', 'シェフだれ?', 'シェフだれ？',
-                'シェフ誰', 'シェフ誰?', 'シェフ誰？']
+        return ['今日の当番は？', '今日の当番は?', '当番だれ？', '当番だれ?',
+                '当番誰？', '当番誰?', '当番は誰？', '当番は誰?',
+                '当番だーれ？', '当番だーれ?', '当番はだーれ？', '当番はだーれ?',
+                '当番だあれ？', '当番だあれ?', '当番はだあれ？', '当番はだあれ?',
+                '今日の当番は', '当番だれ', '当番誰', '当番は誰',
+                '当番はだーれ', '当番はだあれ']
 
 
 class ChefAlias(BaseCommand):
@@ -48,7 +52,7 @@ class ChefAlias(BaseCommand):
             return
 
         def not_found():
-            self._send_message('シェフではないな？')
+            self._send_message('メンバーではないな？')
 
         chef = Chef.find_by_user_id_and_group_id(self._user_id,
                                                  self._group_id, not_found)
