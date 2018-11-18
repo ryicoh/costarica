@@ -15,14 +15,12 @@ class TodayChef(BaseCommand):
         chef.times += 1
         chef.commit()
 
-        rep_text = f'今日のシェフは{chef.alias_name or chef.display_name}だ'
+        rep_text = f'今日の当番は{chef.alias_name or chef.display_name}だ'
 
-        if randint(0, 9) == 0:
-            rep_text += '\n今日のご飯は上手くなるぞ！'
         self._send_message(rep_text)
 
     def _get_command_names(self):
-        return ['任せろ', 'まかせろ', '俺がやるぜ']
+        return ['任せろ', 'まかせろ', '俺がやるぜ', 'バルス']
 
 
 class TodayChefChoice(BaseCommand):
