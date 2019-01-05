@@ -15,7 +15,7 @@ MarkupSafe==1.0
 mccabe==0.6.1
 psycopg2==2.7.3.2
 pylint==1.9.2
-requests==2.19.1
+requests==2.20.0
 six==1.11.0
 SQLAlchemy==1.2.9
 urllib3==1.23
